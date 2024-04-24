@@ -1,58 +1,78 @@
+import { Field, Form, Formik } from "formik";
+import { validationSchema } from "./schemas";
+import axios from 'axios';
+import "./SignUp.css";
+
 const SignUp = () => {
   return (
-    <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
-      <div className="bg-white p-3 rounded w-25">
-        <h2>Register</h2>
-        <form>
-          <div className="mb-3">
-            <label>First Name: </label>
-            <input
+    <div className="form-container">
+      <h2>Register</h2>
+      <Formik
+        initialValues={{
+          firstName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values, { setSubmitting }) => { // Add { setSubmitting } to access Formik's setSubmitting function
+          console.log("values: ", values);
+
+          axios.post("<your_endpoint_here>", values) // Replace "<your_endpoint_here>" with your actual endpoint
+            .then(result => {
+              console.log(result);
+              setSubmitting(false); // Set submitting to false after successful submission
+            })
+            .catch(err => {
+              console.log(err);
+              setSubmitting(false); // Set submitting to false after error
+            });
+        }}
+      >
+        {({ errors, touched }) => (
+          <Form>
+            <Field
+              className="form-group"
               type="text"
               name="firstName"
-              placeholder="Enter your First Name"
-              autoComplete="off"
-              className="form-control rounded-0"
+              placeholder="First Name"
             />
-          </div>
-          <div className="mb-3">
-            <label>Email: </label>
-            <input
+            {errors?.firstName && touched.firstName && (
+              <div className="error">{errors.firstName}</div>
+            )}
+            <Field
+              className="form-group"
               type="email"
               name="email"
-              placeholder="Enter your Email"
-              autoComplete="off"
-              className="form-control rounded-0"
+              placeholder="Email"
             />
-          </div>
-          <div className="mb-3">
-            <label>Password: </label>
-            <input
+            {errors?.email && touched.email && (
+              <div className="error">{errors.email}</div>
+            )}
+            <Field
+              className="form-group"
               type="password"
               name="password"
-              placeholder="Enter your Password"
-              autoComplete="off"
-              className="form-control rounded-0"
+              placeholder="Password"
             />
-          </div>
-          <div className="mb-3">
-            <label>Confirm Password: </label>
-            <input
+            {errors?.password && touched.password && (
+              <div className="error">{errors.password}</div>
+            )}
+            <Field
+              className="form-group"
               type="password"
               name="confirmPassword"
-              placeholder="Confirm your Password"
-              autoComplete="off"
-              className="form-control rounded-0"
+              placeholder="Confirm Password"
             />
-          </div>
-          <button type="submit" className="btn btn-success w-100 rounded-0">
-            Submit
-          </button>
-          <p>Already have an Account</p>
-          <button className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">
-            Login
-          </button>
-        </form>
-      </div>
+            {errors?.confirmPassword && touched.confirmPassword && (
+              <div className="error">{errors.confirmPassword}</div>
+            )}
+            <button className="submit-btn" type="submit">
+              Submit
+            </button>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 };
